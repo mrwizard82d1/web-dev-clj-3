@@ -19,5 +19,8 @@ profiles.clj
 /log
 
 
+# Ignore the development configuration
+guestbook/dev-config.edn
+
 # Ignore h2 database file(s)
 **/guestbook_dev.db.*.db
