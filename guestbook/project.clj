@@ -20,7 +20,7 @@
                  [metosin/reitit "0.5.18"]
                  [metosin/ring-http-response "0.9.3"]
                  [mount "0.1.16"]
-                 [nrepl "1.0.0"]
+                 [nrepl "1.5.2"]
                  [org.clojure/clojure "1.11.1"]
                  [org.clojure/tools.cli "1.0.214"]
                  [org.clojure/tools.logging "1.2.4"]
@@ -60,7 +60,7 @@
                                  [ring/ring-mock "0.4.0"]]
                   :plugins      [[com.jakemccrary/lein-test-refresh "0.24.1"]
                                  [jonase/eastwood "1.2.4"]
-                                 [cider/cider-nrepl "0.26.0"]] 
+                                 [cider/cider-nrepl "0.58.0"]]
                   
                   :source-paths ["env/dev/clj" ]
                   :resource-paths ["env/dev/resources"]
