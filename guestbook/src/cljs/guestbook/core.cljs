@@ -3,5 +3,7 @@
             [reagent.dom :as dom]))
 
 (dom/render
- [:h1 "Hello, Reagent World!"]
+ ;; Specify tag and attributes **without** shortcuts
+ [:div {:id "hello", :class "content"}
+  [:h1 "Hello, Reagent World!"]]
  (.getElementById js/document "content"))
