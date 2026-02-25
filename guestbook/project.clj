@@ -48,7 +48,7 @@
   :target-path "target/%s/"
   :main ^:skip-aot guestbook.core
 
-  :plugins [] 
+  :plugins [[lein-ancient "1.0.0-RC3"]]
 
   :profiles
   {:uberjar {:omit-source true
