@@ -2,4 +2,4 @@
 
 (-> (.getElementById js/document "content")
     (.-innerHTML)
-    (set! "Hello ClojureScript World!"))
+    (set! "Hello Automatically Built ClojureScript World!"))
