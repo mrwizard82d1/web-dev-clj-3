@@ -1,5 +1,7 @@
-(ns guestbook.core)
+(ns guestbook.core
+  (:require [reagent.core :as r]
+            [reagent.dom :as dom]))
 
-(-> (.getElementById js/document "content")
-    (.-innerHTML)
-    (set! "Hello Automatically Built ClojureScript World!"))
+(dom/render
+ [:h1 "Hello, Reagent World!"]
+ (.getElementById js/document "content"))

@@ -13,6 +13,8 @@
 
   :dependencies [[ch.qos.logback/logback-classic "1.5.32"]
                  [cheshire "6.1.0"]
+                 [cljsjs/react "18.3.1-1"]
+                 [cljsjs/react-dom "18.3.1-1"]
                  [clojure.java-time "1.4.3"]
                  [com.h2database/h2 "2.4.240"]
                  [conman "0.9.6"]
@@ -36,6 +38,7 @@
                  [org.webjars.npm/bulma "1.0.4"]
                  [org.webjars.npm/material-icons "1.13.2"]
                  [org.webjars/webjars-locator "0.52"]
+                 [reagent/reagent "2.0.1"]
                  [ring-webjars "0.3.1"]
                  [ring/ring-core "1.15.3"]
                  [ring/ring-defaults "0.7.0"]
