@@ -29,7 +29,7 @@
                  [metosin/ring-http-response "0.9.5"]
                  [mount "0.1.23"]
                  [nrepl "1.5.2"]
-                 [org.clojure/clojure "1.10.1"]
+                 [org.clojure/clojure "1.12.4"]
                  [org.clojure/tools.cli "1.3.250"]
                  [org.clojure/tools.logging "1.3.1"]
                  [org.webjars.npm/bulma "1.0.4"]
