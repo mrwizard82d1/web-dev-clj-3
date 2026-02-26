@@ -39,6 +39,9 @@
                  [org.webjars.npm/material-icons "1.13.2"]
                  [org.webjars/webjars-locator "0.52"]
                  [reagent/reagent "2.0.1"]
+                 ;; React 18 packages from cljsjs
+                 [cljsjs/react "18.3.1-1"]
+                 [cljsjs/react-dom "18.3.1-1"]
                  [ring-webjars "0.3.1"]
                  [ring/ring-core "1.15.3"]
                  [ring/ring-defaults "0.7.0"]
