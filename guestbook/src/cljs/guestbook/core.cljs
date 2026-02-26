@@ -4,9 +4,16 @@
 
 (ns guestbook.core
   (:require [reagent.core :as r]
-            [reagent.dom.client :as rdomc]))
+            [reagent.dom.client :as rdomc]
+            [ajax.core :refer [GET POST]]))
 
 (defonce root (rdomc/create-root (.getElementById js/document "content")))
+
+(defn send-message! [fields]
+  (POST "/message"
+        {:params @fields
+         :handler #(.log js/console (str "response: " %))
+         :error-handler #(.error js/console (str "error: " %))}))
 
 (defn message-form []
   (let [fields (r/atom {})]
@@ -29,6 +36,7 @@
                                                 .-target .-value))}]]
        [:input.button.is-primary
         {:type :submit
+         ::on-click #(send-message! fields)
          :value "comment"}]
        [:div {:style {:margin-top "40px"}}
         [:strong "Debug"]
