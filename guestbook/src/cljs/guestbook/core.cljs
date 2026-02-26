@@ -10,8 +10,12 @@
 (defonce root (rdomc/create-root (.getElementById js/document "content")))
 
 (defn send-message! [fields]
+  ;; Add our anti-forgery token using an `x-csrf-token` header on our request
   (POST "/message"
-        {:params @fields
+        {:format :json
+         :headers {"Accept" "application/transit+json"
+                   "x-csrf-token" (.-value (.getElementById js/document "token"))}
+         :params @fields
          :handler #(.log js/console (str "response: " %))
          :error-handler #(.error js/console (str "error: " %))}))
 
