@@ -25,9 +25,9 @@
 
 ;
 (defn validate-message [params]
-  ;; nil
-  {:message ("message is less than the minimum")}
-  )
+  (if (>= (count (:message params)) 7)
+    nil
+    {:message "message is less than the minimum"}))
 ;
 
 ;
