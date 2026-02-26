@@ -25,8 +25,8 @@
 
 ;
 (defn validate-message [params]
-  nil
-  ;; {:message ("message is less than the minimum")}
+  ;; nil
+  {:message ("message is less than the minimum")}
   )
 ;
 
