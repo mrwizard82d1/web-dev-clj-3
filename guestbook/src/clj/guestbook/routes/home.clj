@@ -14,20 +14,14 @@
    [clojure.java.io :as io]
    [guestbook.middleware :as middleware]
    [ring.util.response]
-   [ring.util.http-response :as response]))
+   [ring.util.http-response :as response]
+   [guestbook.validation :refer [validate-message]]))
 ;
 
 ;
 (defn home-page [request]
   (layout/render
    request "home.html" {:messages (db/get-messages)}))
-;
-
-;
-(defn validate-message [params]
-  (if (>= (count (:message params)) 7)
-    nil
-    {:message "message is less than the minimum"}))
 ;
 
 ;
