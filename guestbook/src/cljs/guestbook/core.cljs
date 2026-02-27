@@ -5,6 +5,7 @@
 (ns guestbook.core
   (:require [reagent.core :as r]
             [reagent.dom.client :as rdomc]
+            [re-frame.core :as rf]
             [ajax.core :refer [GET POST]]
             [clojure.string :as c-str]
             [guestbook.validation :refer [validate-message]]))
@@ -66,7 +67,6 @@
         :handler #(reset! messages (:messages %))}))
 
 (defn message-list [messages]
-  (println messages)
   [:ul.messages
    (for [{:keys [timestamp message name]} @messages]
      ^{:key timestamp}
@@ -75,16 +75,29 @@
       [:p message]
       [:p " - " name]])])
 
+(rf/reg-event-fx
+ :app/initialize
+ (fn [_ _]
+   {:db {:messages/loading? true}}))
+
+(rf/reg-sub
+ :messages/loading?
+ (fn [db]
+   (:messages/loading? db)))
+
 (defn home []
   (let [messages (r/atom nil)]
     (get-messages messages)
     (fn []
-      [:div.content>div.columns.is-centered>div.column.is-two-thirds
-       [:div.columns>div.column
-        [:h3 "Messages"]
-        [message-list messages]]
-       [:div.columns>div.column
-        [message-form messages]]])))
+      (if @(rf/subscribe [:messages/loading?])
+        [:div>div.row>div.span12>h3 "Loading Messages..."]
+        [:div.content>div.columns.is-centered>div.column.is-two-thirds
+         [:div.columns>div.column
+          [:h3 "Messages"]
+          [message-list messages]]
+         [:div.columns>div.column
+          [message-form messages]]]
+        ))))
 
 (defn ^:export start []
   (rdomc/render root [home]))

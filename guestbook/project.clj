@@ -48,7 +48,8 @@
                  [reagent/reagent "2.0.1"]
                  ;; React 18 packages from cljsjs
                  [cljsjs/react "18.3.1-1"]
-                 [cljsjs/react-dom "18.3.1-1"]]
+                 [cljsjs/react-dom "18.3.1-1"]
+                 [re-frame/re-frame "1.4.4"]] ; Add re-frame
 
   :min-lein-version "2.0.0"
   
