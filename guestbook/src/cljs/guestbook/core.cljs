@@ -12,28 +12,35 @@
 
 (defonce root (rdomc/create-root (.getElementById js/document "content")))
 
-(defn send-message! [fields errors messages]
-  (POST "/message"
-        {:format        :json
-         :headers       {"Accept"       "application/transit+json"
-                         "x-csrf-token" (.-value (.getElementById js/document "token"))}
-         :params        @fields
-         :handler       (fn [_]
-                          (swap! messages conj (assoc @fields
-                                                      :timestamp (js/Date.)))
-                          (reset! fields nil)
-                          (reset! errors nil))
-         :error-handler (fn [e]
-                          (.log js/console (str e))
-                          (reset! errors (-> e
-                                             :response
-                                             :errors)))}))
+(rf/reg-event-db
+ :message/add
+ (fn [db [_ message]]
+   (update db :messages/list conj message)))
+
+
+(defn send-message! [fields errors]
+  (if-let [validation-errors (validate-message @fields)]
+    (reset! errors validation-errors)
+    (POST "/message"
+          {:format        :json
+           :headers       {"Accept"       "application/transit+json"
+                           "x-csrf-token" (.-value (.getElementById js/document "token"))}
+           :params        @fields
+           :handler       (fn [_]
+                            (rf/dispatch [:message/add (assoc @fields :timestamp (js/Date.))])
+                            (reset! fields nil)
+                            (reset! errors nil))
+           :error-handler (fn [e]
+                            (.log js/console (str e))
+                            (reset! errors (-> e
+                                               :response
+                                               :errors)))})))
 
 (defn errors-component [errors id]
   (when-let [error (id @errors)]
     [:div.notification.is-danger (c-str/join error)]))
 
-(defn message-form [messages]
+(defn message-form []
   (let [fields (r/atom {})
         errors (r/atom nil)]
     (fn []
@@ -58,13 +65,25 @@
                              assoc :message (-> % .-target .-value))}]]
        [:input.button.is-primary
         {:type      :submit
-         ::on-click #(send-message! fields errors messages)
+         ::on-click #(send-message! fields errors)
          :value     "comment"}]])))
 
-(defn get-messages [messages]
+(rf/reg-event-db
+ :messages/set
+ (fn [db [_ messages]]
+   (-> db
+       (assoc :messages/loading? false
+              :messages/list messages))))
+
+(rf/reg-sub
+ :messages/list
+ (fn [db _]
+   (:messages/list db [])))
+
+(defn get-messages []
   (GET "/messages"
        {:headers {"Accept" "application/transit+json"}
-        :handler #(reset! messages (:messages %))}))
+        :handler #(rf/dispatch [:messages/set (:messages %)])}))
 
 (defn message-list [messages]
   [:ul.messages
@@ -86,18 +105,19 @@
    (:messages/loading? db)))
 
 (defn home []
-  (let [messages (r/atom nil)]
-    (get-messages messages)
+  (let [messages (rf/subscribe [:messages/list])]
+    (rf/dispatch [:app/initialize])
+    (get-messages)
     (fn []
-      (if @(rf/subscribe [:messages/loading?])
-        [:div>div.row>div.span12>h3 "Loading Messages..."]
-        [:div.content>div.columns.is-centered>div.column.is-two-thirds
-         [:div.columns>div.column
-          [:h3 "Messages"]
-          [message-list messages]]
-         [:div.columns>div.column
-          [message-form messages]]]
-        ))))
+      [:div.content>div.columns.is-centered>div.column.is-two-thirds
+       (if @(rf/subscribe [:messages/loading?])
+         [:h3 "Loading Messages..."]
+         [:div
+          [:div.columns>div.column
+           [:h3 "Messages"]
+           [message-list messages]]
+          [:div.columns>div.column
+           [message-form]]])])))
 
 (defn ^:export start []
   (rdomc/render root [home]))
