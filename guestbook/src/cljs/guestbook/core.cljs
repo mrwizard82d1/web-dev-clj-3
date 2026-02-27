@@ -6,25 +6,27 @@
   (:require [reagent.core :as r]
             [reagent.dom.client :as rdomc]
             [ajax.core :refer [GET POST]]
-            [clojure.string :as c-str]))
+            [clojure.string :as c-str]
+            [guestbook.validation :refer [validate-message]]))
 
 (defonce root (rdomc/create-root (.getElementById js/document "content")))
 
 (defn send-message! [fields errors]
-  ;; Add our anti-forgery token using an `x-csrf-token` header on our request
-  (POST "/message"
-        {:format :json
-         :headers {"Accept" "application/transit+json"
-                   "x-csrf-token" (.-value (.getElementById js/document "token"))}
-         :params @fields
-         :handler (fn [r]
-                    (.log js/console (str "response: " r))
-                    (reset! errors nil))
-         :error-handler (fn [e]
-                          (.log js/console (str e))
-                          (reset! errors (-> e
-                                            :response
-                                            :errors)))}))
+  (if-let [validation-errors (validate-message @fields)]
+    (reset! errors validation-errors)
+    (POST "/message"
+          {:format        :json
+           :headers       {"Accept"       "application/transit+json"
+                           "x-csrf-token" (.-value (.getElementById js/document "token"))}
+           :params        @fields
+           :handler       (fn [r]
+                            (.log js/console (str "response: " r))
+                            (reset! errors nil))
+           :error-handler (fn [e]
+                            (.log js/console (str e))
+                            (reset! errors (-> e
+                                               :response
+                                               :errors)))})))
 
 (defn errors-component [errors id]
   (when-let [error (id @errors)]
